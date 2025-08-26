@@ -14,10 +14,13 @@ public class ProviderLookupService {
     public ProviderLookupService(SubscriberRepository subscriberRepo) {
         this.subscriberRepo = subscriberRepo;
     }
-
     public Integer getCurrentProvider(Long msisdn) {
         Subscriber sub = subscriberRepo.findByMsisdn(msisdn);
-        return (sub != null) ? sub.getCurrentProvider() : null;
+        if (sub != null && sub.getCurrentProvider() != null) {
+            return sub.getCurrentProvider().getProviderId();
+        }
+        return null;
     }
+
 }
 

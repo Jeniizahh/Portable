@@ -25,8 +25,10 @@ public class Subscriber {
     @Column(name = "id_number", length = 50, nullable = false)
     private String idNumber;
 
-    @Column(name = "current_provider_id", nullable = false)
-    private Integer currentProvider;
+ // Replace Integer with a proper Provider entity reference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "current_provider_id", referencedColumnName="provider_id", nullable = false)
+    private Provider currentProvider;
 
     @Column(name = "service_type", length = 20, nullable = false)
     private String serviceType;
@@ -44,8 +46,10 @@ public class Subscriber {
     public void setIdType(String idType) { this.idType = idType; }
     public String getIdNumber() { return idNumber; }
     public void setIdNumber(String idNumber) { this.idNumber = idNumber; }
-    public Integer getCurrentProvider() { return currentProvider; }
-    public void setCurrentProvider(Integer currentProvider) { this.currentProvider = currentProvider; }
+    public Provider getCurrentProvider() { return currentProvider; }
+    public void setCurrentProvider(Provider currentProvider) { this.currentProvider = currentProvider; }
+    
+    
     public String getServiceType() { return serviceType; }
     public void setServiceType(String serviceType) { this.serviceType = serviceType; }
 }

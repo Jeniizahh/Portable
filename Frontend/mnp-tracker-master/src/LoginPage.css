@@ -1,20 +1,27 @@
 /* Container & Background */
+/* RESET ALL MARGINS/PADDINGS */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
+}
+
+/* Container & Background */
 .app-container {
   font-family: "Segoe UI", sans-serif;
   background: linear-gradient(135deg, #f5f7fa 60%, #eaf2fd 100%);
   min-height: 100vh;
   color: #2c3e50;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-/* Dark Mode Background & Text */
-body.dark .app-container {
-  background: linear-gradient(135deg, #121212, #1b1b1b);
-  color: #eee;
-}
-/* Header */
+
+/* HEADER */
 .header {
   background: linear-gradient(90deg, #C5aded, #a2d2ff 100%);
   color: white;
-  padding: 1rem 2rem;
+  padding: 2rem 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,10 +29,12 @@ body.dark .app-container {
   min-height: 50px;
   box-shadow: 0 3px 15px rgba(15, 30, 60, 0.1);
 }
+
 body.dark .header {
   background: linear-gradient(90deg, #282a36, #44475a);
   color: #eee;
 }
+
 .header-left {
   position: absolute;
   left: 2rem;
@@ -34,11 +43,13 @@ body.dark .header {
   display: flex;
   align-items: center;
 }
+
 .header-logo {
   height: 70px !important;
   width: auto !important;
   display: block;
 }
+
 .header-title {
   font-family: 'Righteous', 'Montserrat', Arial, sans-serif;
   font-weight: 400;
@@ -49,7 +60,9 @@ body.dark .header {
   background: linear-gradient(90deg, #664930 0%, #997e67 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  text-align: center;
 }
+
 .header-buttons {
   position: absolute;
   right: 2rem;
@@ -59,6 +72,7 @@ body.dark .header {
   align-items: center;
   gap: 1rem;
 }
+
 .header-buttons .login-btn {
   padding: 0.5rem 1.1rem;
   border: none;
@@ -205,6 +219,10 @@ body.dark .main-banner {
 }
 /* Main Content */
 .main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   padding: 2.5rem 2rem;
   color: #34495e;
 }
@@ -217,10 +235,22 @@ body.dark .main-content {
   border-radius: 20px;
   box-shadow: 0 8px 34px rgba(64, 90, 160, 0.1);
   padding: 2.5rem 2.3rem;
-  margin: 2.2rem auto;
   max-width: 1100px;
   border: 1px solid #e0e9f7;
   transition: box-shadow 0.25s ease;
+  /* Position slightly left */
+  margin: 2.2rem 0 2.2rem 8vw; /* Top, Right, Bottom, Left */
+}
+.home-section {
+  margin-left: 6vw;
+  margin-right: auto;
+}
+
+
+.home-section, .faq-container {
+  margin: 2.2rem auto;
+  max-width: 1100px;
+  width: 100%;
 }
 .home-section:hover {
   box-shadow: 0 10px 45px rgba(64, 90, 160, 0.15);
@@ -289,6 +319,10 @@ body.dark .key-facts .fact h3 {
 .service-card:hover {
   box-shadow: 0 1px 28px rgba(40, 80, 170, 0.2);
 }
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 .service-card h4 {
   font-weight: 700;
   margin-bottom: 1rem;
