@@ -1,0 +1,5 @@
+package com.mnptracker.trigger.config;
+
+public class OpenApiConfig {
+
+}

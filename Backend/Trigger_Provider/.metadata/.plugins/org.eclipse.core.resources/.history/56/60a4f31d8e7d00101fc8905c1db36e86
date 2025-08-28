@@ -1,0 +1,5 @@
+package com.mnptracker.trigger.repository;
+
+public class APIRequestLogRepository {
+
+}
