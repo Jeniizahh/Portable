@@ -126,7 +126,7 @@ const LoginPage = () => {
       <div className="banner-decor"></div>
 
       {/* FAQ */}
-      <div className="home-section faq-container">
+    <div className="home-section faq-container section-animate">
         <h2 className="home-section-title">FAQs on Mobile Number Portability</h2>
         <div className="faq-list">
           {faqsData.map((faq, index) => (
@@ -226,7 +226,7 @@ const LoginPage = () => {
               <div className="login-container">
                 <h2 className="login-title">Login with Your Name</h2>
                 <form onSubmit={handleSubmit}>
-                  <div className="form-group input-icon" data-icon="👤">
+                  <div className="form-group input-icon" data-icon="">
                     <label htmlFor="name">Your Name</label>
                     <input
                       type="text"
@@ -244,7 +244,7 @@ const LoginPage = () => {
                       </div>
                     )}
                   </div>
-                  <div className="form-group input-icon" data-icon="🔒">
+                  <div className="form-group input-icon" data-icon="">
                     <label>Captcha Verification</label>
                     <div className="captcha-container">
                       <div className="captcha-code">{captchaCode}</div>

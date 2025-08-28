@@ -10,6 +10,10 @@ public class PortabilityRequest {
     @Id
     @Column(name = "subscriber_id", nullable = false)
     private Long subscriberId;
+    
+ // Add this field for mobile number:
+  //  @Column(name = "msisdn", nullable = false)
+    //private Long msisdn;
 
     @Column(name = "request_reference_id", nullable = false, unique = true)
     private String requestReferenceId;

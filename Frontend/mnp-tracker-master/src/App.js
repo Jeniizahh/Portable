@@ -8,6 +8,7 @@ import UPCInfo from './UPCInfo'; // You'll need to create this
 import Help from './Help';
 import Settings from './Settings';
 
+
 function App() {
   return (
     <Router>

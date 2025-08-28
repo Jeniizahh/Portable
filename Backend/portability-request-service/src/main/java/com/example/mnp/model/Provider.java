@@ -52,4 +52,6 @@ public class Provider {
     public void setApiEndpoint(String apiEndpoint) {
         this.apiEndpoint = apiEndpoint;
     }
+
+	
 }

@@ -1,0 +1,20 @@
+/* Sidebar.css */
+.bm-burger-button {
+  position: fixed;
+  width: 26px;
+  height: 20px;
+  left: 18px;
+  top: 18px;
+  z-index: 1001;
+}
+@media (min-width: 800px) {
+  /* Desktop: sidebar always visible, hide burger */
+  .bm-burger-button {
+    display: none !important;
+  }
+  .bm-menu {
+    left: 0 !important;
+    width: 220px !important;
+    background: #24375b;
+  }
+}

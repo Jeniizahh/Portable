@@ -40,6 +40,7 @@ import {
 import { Link as RouterLink } from "react-router-dom";
 
 import "./DashBoard.css";
+import "./Sidebar"
 
 const ActionCard = ({ icon, title, desc, onClick }) => (
   <button className="dashboard-action-card" onClick={onClick} type="button">
@@ -228,9 +229,7 @@ const Dashboard = () => {
               open={Boolean(profileAnchorEl)}
               onClose={handleProfileClose}
             >
-              <MenuItem component={RouterLink} to="/settings" onClick={handleProfileClose}>
-                Settings
-              </MenuItem>
+              
               <MenuItem component={RouterLink} to="/" onClick={handleProfileClose}>
                 logout
               </MenuItem>
@@ -240,9 +239,7 @@ const Dashboard = () => {
               {darkMode ? <FaSun /> : <FaMoon />}
             </IconButton>
 
-            <IconButton color="inherit" aria-label="notifications">
-              <FaBell />
-            </IconButton>
+           
           </Box>
         </Toolbar>
       </AppBar>

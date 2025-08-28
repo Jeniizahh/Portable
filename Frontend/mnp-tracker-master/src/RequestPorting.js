@@ -7,13 +7,27 @@ import {
   FaExchangeAlt,
   FaMoon,
   FaSun,
-  FaIdCard
+  FaIdCard,
 } from "react-icons/fa";
 import "./RequestPorting.css";
+import "./CustomAlert.css"; // <-- import modal CSS
 
 const providers = ["1", "2", "3", "4"];
 const proofTypes = ["VoterID", "Passport", "Aadhar", "Driving License"];
 
+
+// Custom Alert Component
+const CustomAlert = ({ message, onClose }) => {
+  if (!message) return null;
+  return (
+    <div className="custom-alert-overlay">
+      <div className="custom-alert-box">
+        <p>{message}</p>
+        <button onClick={onClose}>OK</button>
+      </div>
+    </div>
+  );
+};
 const RequestPorting = () => {
   const navigate = useNavigate();
 
@@ -25,8 +39,6 @@ const RequestPorting = () => {
   });
 
   useEffect(() => {
-    if (darkMode) document.body.classList.add("dark");
-    else document.body.classList.remove("dark");
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
 
@@ -39,18 +51,20 @@ const RequestPorting = () => {
   const [proofIdNumber, setProofIdNumber] = useState("");
   const [errors, setErrors] = useState({});
 
+  // Alert state
+  const [alertMessage, setAlertMessage] = useState("");
+    const [nextPage, setNextPage] = useState(null);
+
   // Validation
   const validate = () => {
     const newErrors = {};
 
-    // Mobile Number
     if (!mobileNumber) {
       newErrors.mobileNumber = "Mobile number is required.";
     } else if (!/^\d{10}$/.test(mobileNumber)) {
       newErrors.mobileNumber = "Mobile number must be exactly 10 digits.";
     }
 
-    // Providers
     if (!currentProvider) {
       newErrors.currentProvider = "Please select your current provider.";
     }
@@ -61,14 +75,12 @@ const RequestPorting = () => {
       newErrors.preferredProvider = "Preferred provider must be different.";
     }
 
-    // IMSI
     if (!imsi) {
       newErrors.imsi = "IMSI number is required.";
     } else if (!/^\d{10,15}$/.test(imsi)) {
       newErrors.imsi = "IMSI must be 10–15 digits.";
     }
 
-    // Proof ID
     if (!proofIdType) {
       newErrors.proofIdType = "Please select a Proof ID type.";
     }
@@ -98,12 +110,11 @@ const RequestPorting = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Submit
+  // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
-    // Prepare validation payload
     const validationPayload = {
       msisdn: Number(mobileNumber),
       imsi: Number(imsi),
@@ -113,7 +124,6 @@ const RequestPorting = () => {
     };
 
     try {
-      // Call validation API
       const response = await fetch("http://localhost:8081/requests/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -123,9 +133,8 @@ const RequestPorting = () => {
       const validationResult = await response.text();
 
       if (validationResult === "Valid Subscriber") {
-        alert("Subscriber validation successful!");
+        setAlertMessage("Subscriber validation successful!");
 
-        // Proceed with porting request submission
         const payload = {
           subscriberId: Number(mobileNumber.trim()),
           currentProvider,
@@ -145,21 +154,52 @@ const RequestPorting = () => {
           throw new Error("Failed to submit porting request");
 
         const data = await portingResponse.json();
-        alert(
+        setAlertMessage(
           `Porting Request Submitted successfully!\nReference ID: ${data.requestReferenceId}`
         );
-        navigate("/checking-status");
+
+    const triggerPayload = {
+  subscriberId: Number(mobileNumber.trim()),
+  imsi: imsi,
+  currentProvider: currentProvider,
+  preferredProvider: preferredProvider,
+};
+
+try {
+  const response = await fetch("http://localhost:8083/provider/notify", { // <-- Use your trigger microservice URL
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(triggerPayload),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to trigger notify microservice");
+  }
+
+  const data = await response.json();
+
+  setAlertMessage(`Notify Response: ${data.message}`); // Assuming response JSON has a 'message' field
+} catch (error) {
+  setAlertMessage(`Error: ${error.message || "Unknown error"}`);
+}
+
+        // Navigate after a short delay
+        // 👉 Save the next page for after user clicks OK
+        setNextPage("/checking-status");
       } else {
-        alert("Subscriber validation failed. Please check your details.");
-        return;
+        setAlertMessage(
+          "Subscriber validation failed. Please check your details."
+        );
       }
     } catch (error) {
-      alert("Error: " + error.message);
+      console.error("Error:", error);
+      setAlertMessage("Error processing request. Please try again.");
     }
   };
 
+
   return (
-    <div className="request-porting-page">
+    <div className={`request-porting-page ${darkMode ? "dark" : ""}`}>
       {/* Header */}
       <header className="page-header fixed-header">
         <img src="/images/logo.png" alt="Logo" className="header-logo" />
@@ -222,7 +262,7 @@ const RequestPorting = () => {
                 </option>
               ))}
             </select>
-            <small className="note" style={{ marginTop: "4px", color: "#666" }}>
+            <small className="note" style={{ marginTop: "4px" }}>
               1 - VOD | 2 - Airtel | 3 - Jio | 4 - BSNL
             </small>
             {errors.currentProvider && (
@@ -247,7 +287,7 @@ const RequestPorting = () => {
                 </option>
               ))}
             </select>
-            <small className="note" style={{ marginTop: "4px", color: "#666" }}>
+            <small className="note" style={{ marginTop: "4px" }}>
               1 - VOD | 2 - Airtel | 3 - Jio | 4 - BSNL
             </small>
             {errors.preferredProvider && (
@@ -318,6 +358,19 @@ const RequestPorting = () => {
           </button>
         </form>
       </main>
+
+      {/* Custom Alert */}
+      <CustomAlert
+  message={alertMessage}
+  onClose={() => {
+    setAlertMessage("");
+    if (nextPage) {
+      navigate(nextPage);
+      setNextPage(null); // reset so it doesn’t loop
+    }
+  }}
+/>
+
     </div>
   );
 };
