@@ -27,7 +27,6 @@ import org.springframework.stereotype.Repository;
 	                   @Param("requestBody") String requestBody,
 	                   @Param("httpStatus") Integer httpStatus,
 	                   @Param("responseBody") String responseBody,
-	                   @Param("correlationId") String correlationId,
 	                   @Param("createdAt") OffsetDateTime createdAt);
 	}
 

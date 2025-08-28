@@ -5,7 +5,7 @@ spring:
   application:
     name: trigger-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/mnp
+    url: jdbc:postgresql://localhost:5432/MNP_tracker
     username: postgres
     password: root
     driver-class-name: org.postgresql.Driver

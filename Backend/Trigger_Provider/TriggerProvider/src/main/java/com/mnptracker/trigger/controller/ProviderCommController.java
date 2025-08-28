@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import com.mnptracker.trigger.service.ResponseHandlerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+@CrossOrigin(origins = "http://localhost:3000")
 
 @RestController
 @RequestMapping("/provider")
@@ -41,7 +42,7 @@ public class ProviderCommController {
   @PostMapping("/notify")
   public ResponseEntity<ProviderResponse> notify(@RequestBody NotifyRequest request) {
       ProviderResponse response = new ProviderResponse();
-      response.setCorrelationId(request.getCorrelationId());
+      //response.setCorrelationId(request.getCorrelationId());
       response.setStatus("SUCCESS");
       response.setMessage("Received for " + request.getTargetProvider());
 

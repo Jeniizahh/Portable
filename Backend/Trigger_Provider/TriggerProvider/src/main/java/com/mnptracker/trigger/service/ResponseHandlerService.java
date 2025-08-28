@@ -20,7 +20,7 @@ public class ResponseHandlerService {
   private ProviderRepository providerRepo;
 
   public void record(String provider, String method, String url, String body,
-          Integer statusCode, String response, String correlationId) {
+          Integer statusCode, String response) {
 	  Provider provider1 = providerRepo.findByNameIgnoreCase(provider)
 			    .orElseThrow(() -> new RuntimeException("Provider not found: " + provider));
 
@@ -31,7 +31,7 @@ public class ResponseHandlerService {
 			    body,
 			    statusCode,
 			    response,
-			    correlationId,
+			    //correlationId,
 			    OffsetDateTime.now()
 			);
 // ✅ Use the provider argument directly
@@ -57,5 +57,10 @@ logRepo.save(log);*/
     record("incoming-ack", "POST", "/provider/ack",
         ack.toString(), 200, "ACK-RECORDED", ack.getCorrelationId());
   }*/
+
+  public void record(String targetProvider, String method, String url, String string, int statusCode, String response) {
+	// TODO Auto-generated method stub
+	
+  }
 }
 

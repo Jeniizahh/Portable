@@ -39,12 +39,12 @@ public class APIClientService {
 
         String url = provider.getApiEndpoint() + "/mnp/notify";
         String payload = String.format("{\"msisdn\":\"%s\",\"imsi\":\"%s\"}", req.getMsisdn(), req.getImsi());
-        String signature = signatureService.sign(payload, req.getCorrelationId());
+        //String signature = signatureService.sign(payload, req.getCorrelationId());
 
         String responseBody = webClient.post()
                 .uri(url)
-                .header("X-Correlation-Id", req.getCorrelationId())
-                .header("X-Signature", signature)
+                //.header("X-Correlation-Id", req.getCorrelationId())
+               // .header("X-Signature", signature)
                 .headers(h -> {
                     if (provider.getAuthHeader() != null) {
                         h.add(HttpHeaders.AUTHORIZATION, provider.getAuthHeader());
@@ -66,13 +66,14 @@ public class APIClientService {
                 url,
                 payload,
                 status,
-                responseBody,
-                req.getCorrelationId()
+                responseBody
+                //req.getCorrelationId()
         );
+		return null;
 
-        return new ProviderResponse(req.getCorrelationId(),
+       /* return new ProviderResponse(req.getCorrelationId(),
                 status == 200 ? "SENT" : "FAILED",
-                responseBody);
+                responseBody);*/
     }
 
     // ✅ fallback MUST have same args + Throwable
@@ -85,15 +86,12 @@ public class APIClientService {
                     "FALLBACK",
                     req.toString(),
                     503,
-                    "Circuit open or retries exhausted: " + t.getMessage(),
-                    req.getCorrelationId()
+                    "Circuit open or retries exhausted: " + t.getMessage()
+                    //req.getCorrelationId()
             );
         }
 
         return new ProviderResponse(
-                req.getCorrelationId(),
-                "FAILED",
-                "CircuitBreaker: " + t.getMessage()
         );
     }
 }

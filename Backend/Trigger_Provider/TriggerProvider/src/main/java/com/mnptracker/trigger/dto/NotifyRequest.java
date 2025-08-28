@@ -7,34 +7,34 @@ import lombok.Data;
 public class NotifyRequest {
   @Schema(example = "Airtel")
   private String targetProvider;
-  @Schema(example = "12345-req-abc")
-  private String correlationId; // track this across providers
+  //@Schema(example = "12345-req-abc")
+  //private String correlationId; // track this across providers
   @Schema(example = "+919152782493")
-  private String msisdn;
+  private Long msisdn;
   @Schema(example = "374689632851257")
-  private String imsi;
+  private Long imsi;
   public String getTargetProvider() {
 	return targetProvider;
   }
   public void setTargetProvider(String targetProvider) {
 	this.targetProvider = targetProvider;
   }
-  public String getCorrelationId() {
+  /*public String getCorrelationId() {
 	return correlationId;
   }
   public void setCorrelationId(String correlationId) {
 	this.correlationId = correlationId;
-  }
-  public String getMsisdn() {
+  }*/
+  public Long getMsisdn() {
 	return msisdn;
   }
-  public void setMsisdn(String msisdn) {
+  public void setMsisdn(Long msisdn) {
 	this.msisdn = msisdn;
   }
-  public String getImsi() {
+  public Long getImsi() {
 	return imsi;
   }
-  public void setImsi(String imsi) {
+  public void setImsi(Long imsi) {
 	this.imsi = imsi;
   }
   
