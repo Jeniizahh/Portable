@@ -15,7 +15,6 @@ import "./CustomAlert.css"; // <-- import modal CSS
 const providers = ["1", "2", "3", "4"];
 const proofTypes = ["VoterID", "Passport", "Aadhar", "Driving License"];
 
-
 // Custom Alert Component
 const CustomAlert = ({ message, onClose }) => {
   if (!message) return null;
@@ -28,6 +27,7 @@ const CustomAlert = ({ message, onClose }) => {
     </div>
   );
 };
+
 const RequestPorting = () => {
   const navigate = useNavigate();
 
@@ -53,9 +53,9 @@ const RequestPorting = () => {
 
   // Alert state
   const [alertMessage, setAlertMessage] = useState("");
-    const [nextPage, setNextPage] = useState(null);
+  const [nextPage, setNextPage] = useState(null);
 
-  // Validation
+  // Validation function for form inputs
   const validate = () => {
     const newErrors = {};
 
@@ -110,11 +110,14 @@ const RequestPorting = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Submit handler
+  // Submit handler for the form
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Step 1: Validate form fields before sending any requests
     if (!validate()) return;
 
+    // Payload to validate subscriber via microservice
     const validationPayload = {
       msisdn: Number(mobileNumber),
       imsi: Number(imsi),
@@ -124,17 +127,28 @@ const RequestPorting = () => {
     };
 
     try {
+      console.log("Sending validationPayload:", validationPayload);
+      // Step 2: Call validation microservice first to validate subscriber details
       const response = await fetch("http://localhost:8081/requests/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(validationPayload),
       });
+      if (!response.ok) {
+    console.error("Validation fetch failed with status", response.status);
+    throw new Error(`Validation failed: ${response.statusText}`);
+  }
 
       const validationResult = await response.text();
+      console.log("Validation microservice response:", validationResult);
 
+      // If validation is successful, proceed to store data in your database
       if (validationResult === "Valid Subscriber") {
         setAlertMessage("Subscriber validation successful!");
 
+        // === Here is the key part where you call Express.js endpoint to store porting request ===
+        // You send the relevant form data to your backend server to save in the PostgreSQL database.
+        // This call happens immediately AFTER validation succeeds.
         const payload = {
           subscriberId: Number(mobileNumber.trim()),
           currentProvider,
@@ -144,70 +158,81 @@ const RequestPorting = () => {
           proofIdNumber,
         };
 
-        const portingResponse = await fetch("http://localhost:8081/requests", {
+        const portingResponse = await fetch("http://localhost:8085/requests", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
 
-        if (!portingResponse.ok)
-          throw new Error("Failed to submit porting request");
+        // If backend returns error, throw exception to catch block
+        if (!portingResponse.ok) throw new Error("Failed to submit porting request");
 
+        // Convert response JSON to get reference ID & possibly UPC code
         const data = await portingResponse.json();
+
+        // Show success message to user including reference info
         setAlertMessage(
-          `Porting Request Submitted successfully!\nReference ID: ${data.requestReferenceId}`
+          `Porting Request Submitted successfully!\nReference ID: ${data.requestReferenceId}${
+            data.upcCode ? `\nUPC Code: ${data.upcCode}` : ""
+          }`
         );
 
-    const triggerPayload = {
-  subscriberId: Number(mobileNumber.trim()),
-  imsi: imsi,
-  currentProvider: currentProvider,
-  preferredProvider: preferredProvider,
-};
+        // Notification microservice trigger, can be called later or here as you want
+        const triggerPayload = {
+          subscriberId: Number(mobileNumber.trim()),
+          imsi: imsi,
+          currentProvider: currentProvider,
+          preferredProvider: preferredProvider,
+        };
 
-try {
-  const response = await fetch("http://localhost:8083/provider/notify", { // <-- Use your trigger microservice URL
+        try {
+          const username = "provider_user";
+  const password = "secret_sauce";
+  const basicAuth = "Basic " + btoa(username + ":" + password);
+
+  const notifyResponse = await fetch("http://localhost:8083/provider/notify", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json",
+      "Authorization": basicAuth,
+    },
     body: JSON.stringify(triggerPayload),
-  });
+          });
 
-  if (!response.ok) {
-    throw new Error("Failed to trigger notify microservice");
-  }
+          if (!notifyResponse.ok) throw new Error("Failed to trigger notify microservice");
 
-  const data = await response.json();
+         //const notifyData = await notifyResponse.json();
+         setAlertMessage(
+  `Porting Request Submitted successfully!\n${
+    data.upcCode ? `\nUPC Code: ${data.upcCode}` : ""
+  }\n "Your request has been submitted after successful Validation"`
+);
 
-  setAlertMessage(`Notify Response: ${data.message}`); // Assuming response JSON has a 'message' field
-} catch (error) {
-  setAlertMessage(`Error: ${error.message || "Unknown error"}`);
-}
 
-        // Navigate after a short delay
-        // 👉 Save the next page for after user clicks OK
+          //setAlertMessage(`Notify Response: Your request has been submitted after successful Validation`);
+        } catch (error) {
+          setAlertMessage(`Error: ${error.message || "Unknown error"}`);
+        }
+
+        // Store the next page path to navigate AFTER user dismisses the alert
         setNextPage("/checking-status");
       } else {
-        setAlertMessage(
-          "Subscriber validation failed. Please check your details."
-        );
+        // If validation fails, show validation error message
+        setAlertMessage("Subscriber validation failed. Please check your details.");
       }
     } catch (error) {
+      // Handle any network/server errors gracefully
       console.error("Error:", error);
       setAlertMessage("Error processing request. Please try again.");
     }
   };
-
 
   return (
     <div className={`request-porting-page ${darkMode ? "dark" : ""}`}>
       {/* Header */}
       <header className="page-header fixed-header">
         <img src="/images/logo.png" alt="Logo" className="header-logo" />
-        <button
-          className="back-btn"
-          onClick={() => navigate(-1)}
-          aria-label="Go Back"
-        >
+        <button className="back-btn" onClick={() => navigate(-1)} aria-label="Go Back">
           <FaArrowLeft size={18} aria-hidden="true" />
         </button>
         <h1>Request Porting</h1>
@@ -225,9 +250,12 @@ try {
         </div>
       </header>
 
+      {/* Main form container */}
       <main className="request-container">
+        {/* Form element */}
         <form className="request-form" onSubmit={handleSubmit} noValidate>
-          {/* Mobile Number */}
+          
+          {/* Mobile Number Field */}
           <div className="input-group">
             <label htmlFor="mobileNumber">
               <FaPhoneAlt className="input-icon" /> Mobile Number
@@ -240,9 +268,7 @@ try {
               onChange={(e) => setMobileNumber(e.target.value)}
               maxLength="10"
             />
-            {errors.mobileNumber && (
-              <span className="error-text">{errors.mobileNumber}</span>
-            )}
+            {errors.mobileNumber && <span className="error-text">{errors.mobileNumber}</span>}
           </div>
 
           {/* Current Provider */}
@@ -265,9 +291,7 @@ try {
             <small className="note" style={{ marginTop: "4px" }}>
               1 - VOD | 2 - Airtel | 3 - Jio | 4 - BSNL
             </small>
-            {errors.currentProvider && (
-              <span className="error-text">{errors.currentProvider}</span>
-            )}
+            {errors.currentProvider && <span className="error-text">{errors.currentProvider}</span>}
           </div>
 
           {/* Preferred Provider */}
@@ -290,9 +314,7 @@ try {
             <small className="note" style={{ marginTop: "4px" }}>
               1 - VOD | 2 - Airtel | 3 - Jio | 4 - BSNL
             </small>
-            {errors.preferredProvider && (
-              <span className="error-text">{errors.preferredProvider}</span>
-            )}
+            {errors.preferredProvider && <span className="error-text">{errors.preferredProvider}</span>}
           </div>
 
           {/* IMSI Number */}
@@ -307,9 +329,7 @@ try {
               value={imsi}
               onChange={(e) => setImsi(e.target.value)}
             />
-            <small className="note">
-              ℹ️ To get your IMSI: Go to Settings → About Device
-            </small>
+            <small className="note">ℹ️ To get your IMSI: Go to Settings → About Device</small>
             {errors.imsi && <span className="error-text">{errors.imsi}</span>}
           </div>
 
@@ -330,9 +350,7 @@ try {
                 </option>
               ))}
             </select>
-            {errors.proofIdType && (
-              <span className="error-text">{errors.proofIdType}</span>
-            )}
+            {errors.proofIdType && <span className="error-text">{errors.proofIdType}</span>}
           </div>
 
           {/* Proof ID Number */}
@@ -347,30 +365,28 @@ try {
               value={proofIdNumber}
               onChange={(e) => setProofIdNumber(e.target.value)}
             />
-            {errors.proofIdNumber && (
-              <span className="error-text">{errors.proofIdNumber}</span>
-            )}
+            {errors.proofIdNumber && <span className="error-text">{errors.proofIdNumber}</span>}
           </div>
 
-          {/* Submit */}
+          {/* Submit button */}
           <button type="submit" className="submit-btn">
             Submit Request
           </button>
         </form>
       </main>
 
-      {/* Custom Alert */}
+      {/* Custom Alert Modal */}
       <CustomAlert
-  message={alertMessage}
-  onClose={() => {
-    setAlertMessage("");
-    if (nextPage) {
-      navigate(nextPage);
-      setNextPage(null); // reset so it doesn’t loop
-    }
-  }}
-/>
-
+        message={alertMessage}
+        onClose={() => {
+          setAlertMessage("");
+          // Navigate only AFTER alert is closed and nextPage is set
+          if (nextPage) {
+            navigate(nextPage);
+            setNextPage(null); // Reset to prevent loops
+          }
+        }}
+      />
     </div>
   );
 };

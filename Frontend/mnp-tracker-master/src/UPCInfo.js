@@ -30,6 +30,7 @@ const UPCInfo = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showToast, setShowToast] = useState(false);
+  const [customAlert, setCustomAlert] = useState("");
 
   useEffect(() => {
     if (darkMode) document.body.classList.add("dark");
@@ -50,15 +51,32 @@ const UPCInfo = () => {
     return true;
   };
 
-  const handleFetchUPC = () => {
+  const handleFetchUPC = async () => {
     if (!validate()) return;
+
     setLoading(true);
-    setTimeout(() => {
+    setError(null);
+    setUpcCode(null);
+
+    try {
+      const response = await fetch(`http://localhost:8086/requests/upc/${mobileNumber}`);
+      if (response.ok) {
+        const data = await response.json();
+        setUpcCode(data.upcCode);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 2100);
+      } else if (response.status === 404) {
+        const errData = await response.json();
+        setCustomAlert(errData.message || "Mobile number not found. Please request for porting.");
+      } else {
+        setCustomAlert("Failed to fetch UPC code. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Error fetching UPC:", error);
+      setCustomAlert("Error connecting to server.");
+    } finally {
       setLoading(false);
-      setUpcCode("1234-5678-9012");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2100);
-    }, 1800);
+    }
   };
 
   const handleCopyUPC = () => {
@@ -87,7 +105,6 @@ const UPCInfo = () => {
       <nav className="sidebar">
         <div className="sidebar-logo-wrap" onClick={() => navigate("/dashboard")} style={{ cursor: "pointer" }}>
           <img src="/images/logo.png" alt="MNP Tracker Logo" className="side-logo" />
-         
         </div>
         <ul>
           <li onClick={() => handleSidebarNav("/dashboard")} tabIndex={0} role="link" onKeyDown={(e) => { if (e.key === "Enter") handleSidebarNav("/dashboard"); }}>
@@ -163,8 +180,9 @@ const UPCInfo = () => {
                 <span className="key-icon" role="img" aria-label="key">
                   🔑
                 </span>
-                <span>Your UPC Code:</span>
-                <strong style={{ letterSpacing: ".08em" }}>{upcCode}</strong>
+                <span style={{ color: 'red', fontWeight: '600' }}>Your UPC Code:</span>
+
+                <strong style={{ color:'red',letterSpacing: ".08em" }}>{upcCode}</strong>
                 <button className="copy-btn" onClick={handleCopyUPC} title="Copy UPC Code" aria-label="Copy UPC Code">
                   <FaClipboard />
                 </button>
@@ -175,9 +193,8 @@ const UPCInfo = () => {
               <div className="porting-guide-card fade-in" ref={nextStepsRef} tabIndex={-1}>
                 <h3>Next Steps</h3>
                 <ul>
-                  <li>Go to Request New Porting page</li>
-                  <li>Fill out the porting request and enter your UPC code</li>
-                  <li>Complete KYC and port your mobile number</li>
+                  <li>Go to Checking Porting Status page</li>
+                  <li>Enter your UPC code</li>
                 </ul>
               </div>
             )}
@@ -190,6 +207,15 @@ const UPCInfo = () => {
           </div>
         )}
       </div>
+
+      {customAlert && (
+        <div className="custom-alert-overlay" role="alertdialog" aria-modal="true">
+          <div className="custom-alert-box">
+            <p>{customAlert}</p>
+            <button onClick={() => setCustomAlert("")} aria-label="Close alert">OK</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

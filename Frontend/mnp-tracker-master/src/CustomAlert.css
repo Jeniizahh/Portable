@@ -53,3 +53,19 @@
   background: #2a3a70;
   color: #fff;
 }
+body.dark .custom-alert-box {
+  background: #2a3a70;
+  color: #fff;
+}
+body.dark .custom-alert-overlay {
+  background: rgba(0,0,0,0.85);
+}
+body.dark .alert-btn,
+body.dark .custom-alert-close {
+  background: #4577ff;
+  color: #fff;
+}
+body.dark .alert-btn:hover,
+body.dark .custom-alert-close:hover {
+  background: #3554a2;
+}

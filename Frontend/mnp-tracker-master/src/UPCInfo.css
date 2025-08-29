@@ -546,6 +546,27 @@ body.dark .toast-notify {
     box-shadow: 0 2px 8px rgba(0,0,0, 0.3);
     z-index: 1100;
   }
+body.dark .custom-alert-box {
+  background: #2a3a70;
+  color: #fff;
+}
+
+body.dark .custom-alert-overlay {
+  background: rgba(0,0,0,0.85);
+}
+
+body.dark .alert-btn,
+body.dark .custom-alert-close {
+  background: #4577ff;
+  color: #fff;
+}
+
+body.dark .alert-btn:hover,
+body.dark .custom-alert-close:hover {
+  background: #3554a2;
+}
+
+
 
   .page-header h1 {
     font-size: 1.5rem;

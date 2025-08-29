@@ -12,11 +12,11 @@ const faqsData = [
   { question: "What is Mobile Number Portability (MNP)?", answer: "MNP allows mobile users to change their network provider while keeping their existing mobile number." },
   { question: "Who can apply for MNP?", answer: "Any mobile subscriber with an active number can apply to switch to another network provider." },
   { question: "How long does porting take?", answer: "Usually within 7 working days, but may vary by provider." },
-  { question: "Are there charges for porting?", answer: "Some providers charge a small fee, but many offer free porting." },
-  { question: "What documents are required?", answer: "Valid ID proof, address proof, and a passport-size photo are generally needed." },
+  { question: "Are there charges for porting?", answer: "We offer free porting service." },
+  { question: "What documents are required?", answer: "A Valid ID proof is generally needed along with details about your previous provider." },
   { question: "Can I port while on postpaid?", answer: "Yes, but clear any outstanding dues before applying." },
   { question: "Will my number change after porting?", answer: "No, your mobile number stays the same after successful porting." },
-  { question: "Do I need to visit a store?", answer: "Many providers allow online requests, though some require a visit for verification." },
+  { question: "Do I need to visit a store?", answer: "Our Service can be done completely online." },
 ];
 
 const LoginPage = () => {

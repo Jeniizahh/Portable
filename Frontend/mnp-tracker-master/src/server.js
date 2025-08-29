@@ -10,7 +10,7 @@ app.use(express.json());
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
-  database: 'mnp_tracker',
+  database: 'MNP_tracker',
   password: 'root',
   port: 5432,
 });
@@ -62,7 +62,7 @@ app.post('/requests', async (req, res) => {
   }
 });
 
-const PORT = 8081;
+const PORT = 8085;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -40,17 +40,17 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-      <script>
+<script>
 window.addEventListener('mouseover', initLandbot, { once: true });
 window.addEventListener('touchstart', initLandbot, { once: true });
 var myLandbot;
 function initLandbot() {
   if (!myLandbot) {
     var s = document.createElement('script');
-    s.type = "module";
+    s.type = "module"
     s.async = true;
     s.addEventListener('load', function() {
-      myLandbot = new Landbot.Popup({
+      var myLandbot = new Landbot.Livechat({
         configUrl: 'https://storage.googleapis.com/landbot.online/v3/H-3096693-KPM9L2SDK2XWKQOG/index.json',
       });
     });
@@ -63,3 +63,5 @@ function initLandbot() {
 
   </body>
 </html>
+
+

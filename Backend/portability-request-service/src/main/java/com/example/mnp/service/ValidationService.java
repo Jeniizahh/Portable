@@ -12,10 +12,20 @@ public class ValidationService {
     private SubscriberRepository subscriberRepo;
 
     public boolean validateSubscriber(Long msisdn, Long imsi, String idType, String idNumber, Integer currentProviderId) {
-        Subscriber sub = subscriberRepo.findByMsisdn(msisdn);
-        if(sub == null) return false;
+        //Subscriber sub = subscriberRepo.findByMsisdn(msisdn);
+        //if(sub == null) return false;
+    	Subscriber sub = subscriberRepo.findByMsisdn(msisdn);
+        if(sub == null) {
+            //System.out.println("Subscriber not found for msisdn: " + msisdn);
+            return false;
+        }
 
-        
+        /*System.out.println("DB msisdn: " + sub.getMsisdn() + ", Input: " + msisdn);
+        System.out.println("DB imsi: " + sub.getImsi() + ", Input: " + imsi);
+        System.out.println("DB idType: '" + sub.getIdType().trim() + "', Input: '" + idType.trim() + "'");
+        System.out.println("DB idNumber: '" + sub.getIdNumber().trim() + "', Input: '" + idNumber.trim() + "'");
+        System.out.println("DB currentProviderId: " + sub.getCurrentProvider().getProviderId() + ", Input: " + currentProviderId);
+        */
         return sub.getImsi().equals(imsi)
             && sub.getIdType().trim().equalsIgnoreCase(idType.trim())
             && sub.getIdNumber().trim().equalsIgnoreCase(idNumber.trim())
