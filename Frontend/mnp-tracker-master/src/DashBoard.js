@@ -106,7 +106,7 @@ const Dashboard = () => {
       <Box
         sx={{ display: "flex", alignItems: "center", justifyContent: "center", py: 2 }}
       >
-        <img
+      <img
           src="/images/logo.png"
           alt="Logo"
           style={{
