@@ -1,0 +1,29 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Provision Environment') {
+      steps {
+        // Run a simple shell script to prepare environment
+        sh '''
+          echo "Starting environment provisioning..."
+          # Example: create a folder, install dependencies, or setup configs
+          mkdir -p /tmp/myenv
+          echo "Environment setup complete."
+        '''
+      }
+    }
+
+    stage('Build') {
+      steps {
+        echo 'Build your app here...'
+      }
+    }
+
+    stage('Deploy') {
+      steps {
+        echo 'Deploy your app here...'
+      }
+    }
+  }
+}

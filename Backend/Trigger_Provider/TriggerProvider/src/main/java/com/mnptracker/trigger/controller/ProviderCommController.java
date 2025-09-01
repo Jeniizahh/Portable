@@ -8,9 +8,9 @@ import com.mnptracker.trigger.dto.NotifyRequest;
 import com.mnptracker.trigger.dto.ProviderResponse;
 
 import com.mnptracker.trigger.service.APIClientService;
+import com.mnptracker.trigger.service.ResponseHandlerService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import com.mnptracker.trigger.service.ResponseHandlerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:3000")

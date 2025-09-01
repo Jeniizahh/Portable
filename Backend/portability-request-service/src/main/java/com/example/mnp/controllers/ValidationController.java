@@ -6,6 +6,9 @@ import com.example.mnp.model.Provider;
 import com.example.mnp.repository.ProviderRepository;
 import com.example.mnp.service.PortRequestService;
 import com.example.mnp.service.ValidationService;
+
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +24,7 @@ public class ValidationController {
     @Autowired
     private PortRequestService portRequestService;
 
+    @Operation(summary = "Validates the information of the subscribers to initiate the porting request.")
     @PostMapping("/validate")
     public ResponseEntity<String> validateSubscriber(@RequestBody ValidationRequest req) {
         boolean isValid = validationService.validateSubscriber(req.getMsisdn(), req.getImsi(), req.getIdType(), req.getIdNumber(), req.getCurrentProvider());
