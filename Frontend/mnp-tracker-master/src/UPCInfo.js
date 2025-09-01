@@ -104,7 +104,7 @@ const UPCInfo = () => {
       {/* Sidebar */}
       <nav className="sidebar">
         <div className="sidebar-logo-wrap" onClick={() => navigate("/dashboard")} style={{ cursor: "pointer" }}>
-          <img src="/images/logo.png" alt="MNP Tracker Logo" className="side-logo" />
+          
         </div>
         <ul>
           <li onClick={() => handleSidebarNav("/dashboard")} tabIndex={0} role="link" onKeyDown={(e) => { if (e.key === "Enter") handleSidebarNav("/dashboard"); }}>
